@@ -1,7 +1,3 @@
-For a **high-scale URL shortener** in **Go**, the project structure should be **modular, scalable, and easy to maintain**. Below is a **clean and production-ready project structure** that follows best practices.  
-
----
-
 ## **Project Structure**
 ```
 url-shortener/
