@@ -1,3 +1,3 @@
 # Short.ly
 
-URL shortening platform. It handles backend operations, including URL processing, database interactions, and API integrations.
+Short.ly is a URL shortening platform designed to simplify long URLs into concise, shareable links. It handles backend operations, including URL processing, database interactions, and API integrations.
