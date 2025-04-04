@@ -23,7 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize handler:", err)
 	}
-	log.Println("Handler initialized successfully")
 	
 	fmt.Println("Hello, Welcome to Short.ly")
 	

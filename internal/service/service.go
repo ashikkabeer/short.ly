@@ -8,8 +8,11 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/ashikkabeer/short.ly/internal/cache"
 	"github.com/ashikkabeer/short.ly/internal/repository"
 )
+
+const cacheThreshold = 10 // Define the threshold for hot URLs
 
 type URLService struct {
 	repo repository.URLRepository
@@ -30,18 +33,30 @@ func (s *URLService) GenerateShortURL(url string, ip string) (string, error) {
 }
 
 func (s *URLService) RetrieveOriginalUrl(shortCode string) (string, error) {
-	ctx := context.Background()
+	// Check if the URL is cached
+	originalUrl, _ := cache.Get(shortCode)
+	if originalUrl != "" {
+		return originalUrl, nil
+	}
+
+	// Retrieve the URL from the database
 	originalUrl, err := s.repo.Find(ctx, shortCode)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve URL: %v", err)
 	}
+
+	// Check if the URL is hot
+	accessCount, _ := cache.GetAccessCount(shortCode)
+	if accessCount >= cacheThreshold {
+		cache.Create(shortCode, originalUrl) // Cache for 24 hours
+	}
+
 	return originalUrl, nil
 }
 
 func GenerateHASH(url string) string {
-	// Use time as part of the input to ensure different hashes
-	timestamp := time.Now().UnixNano()
 	// Combine URL and timestamp with a random number for more uniqueness
+	timestamp := time.Now().UnixNano()
 	randomPart := rand.Int63()
 	input := fmt.Sprintf("%s%d%d", url, timestamp, randomPart)
 	
